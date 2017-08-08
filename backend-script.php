@@ -42,6 +42,12 @@
 		sendMessage('none',$update['message']['chat']['id'],"Failed to connect to Database!\nPlease contact ".MAINTAINER." and forward this message...\n".$db->connect_error());
 	}
 
+	if ($update['message']['chat']['type']!='private' && !$update['inline_query'] && !$update['callback_query']) {
+		sendMessage('none',$update['message']['chat']['id'],'Please create poll in private, and share through inline message. This bot is not supposed to be added to groups');
+		exit;
+	}
+
+
 	if (isset($update['callback_query'])) {
 		/* CALLBACK HANDLER */
 		if (substr($update['callback_query']['data'],0,5) == 'comm:') {
