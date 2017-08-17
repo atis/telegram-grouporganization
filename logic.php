@@ -56,16 +56,16 @@ function poll_vote($update) {
 		$user_text = $db->real_escape_string($update['callback_query']['from']['first_name']);
 		if ($update['callback_query']['from']['last_name']) $user_text .= ' '.$update['callback_query']['from']['last_name'];
 
-		$rs = my_query('SELECT * FROM polls WHERE id='.$incoming_parameters[1].' AND chat_id='.$params['chat_id'].'');
+		$rs = my_query('SELECT * FROM polls WHERE id='.intval($incoming_parameters[1]).' AND chat_id='.$params['chat_id'].'');
 		$poll = $rs->fetch_assoc();
 
-		$rs = my_query('SELECT * FROM poll_votes WHERE poll_id='.$params['poll_id'].' AND user_id='.$update['callback_query']['from']['id'].'');
+		$rs = my_query('SELECT * FROM poll_votes WHERE poll_id='.intval($params['poll_id']).' AND user_id='.$update['callback_query']['from']['id'].'');
 		$answer = $rs->fetch_assoc();
 		debug_log($answer);
 		
 		if (!$answer) {
 			$votes = json_encode(array($vote=>$update['callback_query']['from']['id']));
-			my_query('INSERT INTO poll_votes SET poll_id='.$params['poll_id'].', user_id='.$update['callback_query']['from']['id'].', username="'.$username.'", user_text="'.$user_text.'", vote="'.$db->real_escape_string($votes).'"');
+			my_query('INSERT INTO poll_votes SET poll_id='.intval($params['poll_id']).', user_id='.$update['callback_query']['from']['id'].', username="'.$username.'", user_text="'.$user_text.'", vote="'.$db->real_escape_string($votes).'"');
 		} else {
 			$prev_vote = json_decode($answer['vote'],true);
 			if ($prev_vote[$vote]) {
@@ -79,10 +79,10 @@ function poll_vote($update) {
 					$prev_vote[$vote] = $update['callback_query']['from']['id'];
 				}
 			}
-			my_query('UPDATE poll_votes SET  vote="'.$db->real_escape_string(json_encode($prev_vote)).'", username="'.$username.'", user_text="'.$user_text.'" WHERE poll_id='.$params['poll_id'].' AND user_id='.$update['callback_query']['from']['id'].'');
+			my_query('UPDATE poll_votes SET  vote="'.$db->real_escape_string(json_encode($prev_vote)).'", username="'.$username.'", user_text="'.$user_text.'" WHERE poll_id='.intval($params['poll_id']).' AND user_id='.$update['callback_query']['from']['id'].'');
 		}
 		
-		$query = 'SELECT * FROM poll_votes WHERE poll_id='.$params['poll_id'];
+		$query = 'SELECT * FROM poll_votes WHERE poll_id='.intval($params['poll_id']);
 		$rs = my_query($query);
 
 		$votes = array();
@@ -156,7 +156,7 @@ function poll_list($update) {
 	$request = my_query('SELECT * FROM polls WHERE chat_id = '.$update['inline_query']['from']['id'].' ORDER BY id DESC LIMIT 1;');
 	$rows = array();
 	while($answer = $request->fetch_assoc()) $rows[] = $answer;
-	$request = my_query('SELECT * FROM polls ORDER BY chat_id ASC, id ASC;');
+	//$request = my_query('SELECT * FROM polls ORDER BY chat_id ASC, id ASC;');
 	answerInlineQuery($update['inline_query']['id'],$rows);
 }
 
@@ -231,7 +231,7 @@ function poll_pointer_0($update) {
 		
 		//$request = my_query('SELECT MAX(id) from polls WHERE chat_id = '.$update['message']['chat']['id']);
 		//$answer = $request->fetch_row();
-		$request = my_query('INSERT INTO polls SET chat_id="'.$update['message']['chat']['id'].'", poll_text="'.$update['message']['text'].'", anony="'.$pointer_anony.'", poll_type="'.$pointer_type.'"');
+		$request = my_query('INSERT INTO polls SET chat_id="'.$update['message']['chat']['id'].'", poll_text="'.$db->real_escape_string($update['message']['text']).'", anony="'.$pointer_anony.'", poll_type="'.$pointer_type.'"');
 		if ($request === TRUE) {
 			$request = update_user($update, 1); // my_query('UPDATE users SET pointer=1 WHERE chat_id='.$update['message']['chat']['id'].';');
 			if ($request === TRUE){
