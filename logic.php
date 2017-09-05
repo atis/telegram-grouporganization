@@ -311,9 +311,9 @@ function update_user($update, $pointer = NULL) {
 		global $db;
 		
 		if ($pointer!==NULL) {
-			$request = my_query('REPLACE INTO users SET chat_id='.$update['message']['chat']['id'].', username="'.$db->real_escape_string($update['message']['chat']['username']).'", first_name="'.$db->real_escape_string($update['message']['chat']['first_name']).'", last_name="'.$db->real_escape_string($update['message']['chat']['last_name']).'", pointer='.$pointer);
+			$request = @my_query('REPLACE INTO users SET chat_id='.$update['message']['chat']['id'].', username="'.$db->real_escape_string($update['message']['chat']['username']).'", first_name="'.$db->real_escape_string($update['message']['chat']['first_name']).'", last_name="'.$db->real_escape_string($update['message']['chat']['last_name']).'", pointer='.$pointer);
 		} else {
-			$request = my_query('REPLACE INTO users SET chat_id='.$update['message']['chat']['id'].', username="'.$db->real_escape_string($update['message']['chat']['username']).'", first_name="'.$db->real_escape_string($update['message']['chat']['first_name']).'", last_name="'.$db->real_escape_string($update['message']['chat']['last_name']).'"');
+			$request = @my_query('REPLACE INTO users SET chat_id='.$update['message']['chat']['id'].', username="'.$db->real_escape_string($update['message']['chat']['username']).'", first_name="'.$db->real_escape_string($update['message']['chat']['first_name']).'", last_name="'.$db->real_escape_string($update['message']['chat']['last_name']).'"');
 		}
 		return $request;
 }

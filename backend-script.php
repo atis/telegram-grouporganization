@@ -37,7 +37,7 @@
 	}
 	$command = NULL;
 
-	$db = new mysqli('localhost',BOT_ID,BOT_KEY,BOT_ID);
+	$db = new mysqli('127.0.0.1',BOT_ID,BOT_KEY,BOT_ID);
 	if ($db->connect_errno) {
 		sendMessage('none',$update['message']['chat']['id'],"Failed to connect to Database!\nPlease contact ".MAINTAINER." and forward this message...\n".$db->connect_error());
 	}
