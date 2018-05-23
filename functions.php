@@ -173,14 +173,14 @@ function answerInlineQuery($query_id,$contents) {
 			'id' => $query_id.$key,
 			'title' => $row['poll_text'],
 			'description' => $desc,
-			'is_personal' => true,
-			'cache_time' => 20,
 			'input_message_content' => $input_message_content,
 			'reply_markup' => ['inline_keyboard' => $inline_keyboard],
 		];  
 	}
 	$reply_content = [
 		'method' => 'answerInlineQuery',
+		'is_personal' => true,
+		'cache_time' => 20,
 		'inline_query_id' => $query_id,
 		'results' => $results,
 	];
